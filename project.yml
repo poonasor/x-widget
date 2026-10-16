@@ -25,6 +25,9 @@ targets:
       path: XWidget/Info.plist
       properties:
         CFBundleDisplayName: X Widget
+        CFBundleShortVersionString: $(MARKETING_VERSION)
+        CFBundleVersion: $(CURRENT_PROJECT_VERSION)
+        LSApplicationCategoryType: public.app-category.social-networking
         LSUIElement: true
         AppGroupID: $(TeamIdentifierPrefix)ca.perpetualmedia.XWidget
         KeychainGroup: $(AppIdentifierPrefix)ca.perpetualmedia.XWidget.shared
@@ -55,6 +58,8 @@ targets:
       path: FeedWidget/Info.plist
       properties:
         CFBundleDisplayName: X Feed
+        CFBundleShortVersionString: $(MARKETING_VERSION)
+        CFBundleVersion: $(CURRENT_PROJECT_VERSION)
         AppGroupID: $(TeamIdentifierPrefix)ca.perpetualmedia.XWidget
         KeychainGroup: $(AppIdentifierPrefix)ca.perpetualmedia.XWidget.shared
         NSExtension:
