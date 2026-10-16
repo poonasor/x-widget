@@ -27,6 +27,7 @@ A standard WidgetKit widget (Medium, Large and Extra Large) is included too, for
 - **Desktop panel:** glass cards or no background, adjustable width, and a choice of display. Click a post to open it on x.com.
 - **Images:** up to four per post, laid out the way X shows them. This can be turned off in Settings.
 - **Menu bar app:** no Dock icon. Refresh, show or hide the panel, and switch displays from the menu bar.
+- **Start at login:** off by default. Turn it on in Settings → General. It follows macOS's Login Items, so changes made in System Settings show up here too.
 - **Guided setup:** a step-by-step walkthrough for connecting your own X developer app.
 
 ## Install
