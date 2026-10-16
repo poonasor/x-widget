@@ -34,6 +34,10 @@ struct SettingsView: View {
 
     private var generalForm: some View {
         Form {
+            Section("General") {
+                LaunchAtLoginToggle()
+            }
+
             Section("Live Updates") {
                 Picker("Poll every", selection: $pollInterval) {
                     Text("30 seconds").tag(30.0)
