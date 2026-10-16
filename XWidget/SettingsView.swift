@@ -13,10 +13,26 @@ struct SettingsView: View {
     @AppStorage(SettingsKey.overlayWidth, store: AppGroup.defaults) private var width = 380.0
     @AppStorage(SettingsKey.overlayStyle, store: AppGroup.defaults) private var style = OverlayStyle.glass
 
-    var body: some View {
-        Form {
-            XAccountSection(store: store)
+    private enum SettingsTab: Hashable { case general, account }
+    // New users land on X Account so setup is the first thing they see.
+    @State private var tab: SettingsTab = TokenStore.load() == nil ? .account : .general
 
+    var body: some View {
+        TabView(selection: $tab) {
+            Tab("Settings", systemImage: "gearshape", value: .general) { generalForm }
+            Tab("X Account", systemImage: "person.crop.circle", value: .account) {
+                Form { XAccountSection(store: store) }
+                    .formStyle(.grouped)
+                    .frame(width: 500)
+                    .frame(minHeight: 420, idealHeight: 720)
+            }
+        }
+        .onAppear { NSApp.activate() }
+        .onChange(of: clientID) { refresh() }
+    }
+
+    private var generalForm: some View {
+        Form {
             Section("Live Updates") {
                 Picker("Poll every", selection: $pollInterval) {
                     Text("30 seconds").tag(30.0)
@@ -43,13 +59,11 @@ struct SettingsView: View {
         }
         .formStyle(.grouped)
         .frame(width: 500)
-        .frame(minHeight: 560, idealHeight: 760)
-        .onAppear { NSApp.activate() }
+        .fixedSize(horizontal: false, vertical: true)
         .onChange(of: overlayEnabled) { overlay.applySettings() }
         .onChange(of: edge) { overlay.applySettings() }
         .onChange(of: width) { overlay.applySettings() }
         .onChange(of: pollInterval) { store.start() }
-        .onChange(of: clientID) { refresh() }
     }
 
     private func refresh() { Task { await store.refreshAll() } }

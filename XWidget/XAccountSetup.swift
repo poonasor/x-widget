@@ -15,7 +15,7 @@ struct XAccountSection: View {
     static let websiteURL = "https://x.com"
 
     var body: some View {
-        Section("X Account") {
+        Section {
             if signedIn {
                 HStack {
                     Label("Signed in to X", systemImage: "checkmark.circle.fill").foregroundStyle(.green)
