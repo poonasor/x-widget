@@ -25,4 +25,5 @@ enum SettingsKey {
     static let overlayStyle = "overlayStyle"
     static let overlayFeed = "overlayFeed"
     static let overlayDisplay = "overlayDisplay"
+    static let showMedia = "showMedia"
 }
