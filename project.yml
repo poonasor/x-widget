@@ -1,0 +1,75 @@
+name: XWidget
+options:
+  bundleIdPrefix: ca.perpetualmedia
+  deploymentTarget:
+    macOS: "26.0"
+  createIntermediateGroups: true
+settings:
+  base:
+    DEVELOPMENT_TEAM: RNUS5696SB
+    CODE_SIGN_STYLE: Automatic
+    SWIFT_VERSION: "6.0"
+    MARKETING_VERSION: "0.1.0"
+    CURRENT_PROJECT_VERSION: "1"
+    ENABLE_HARDENED_RUNTIME: YES
+targets:
+  XWidget:
+    type: application
+    platform: macOS
+    sources:
+      - XWidget
+      - Shared
+    dependencies:
+      - target: FeedWidget
+    info:
+      path: XWidget/Info.plist
+      properties:
+        CFBundleDisplayName: X Widget
+        LSUIElement: true
+        AppGroupID: $(TeamIdentifierPrefix)ca.perpetualmedia.XWidget
+        KeychainGroup: $(AppIdentifierPrefix)ca.perpetualmedia.XWidget.shared
+        CFBundleURLTypes:
+          - CFBundleURLName: ca.perpetualmedia.XWidget.oauth
+            CFBundleURLSchemes: [xwidget]
+    entitlements:
+      path: XWidget/XWidget.entitlements
+      properties:
+        com.apple.security.app-sandbox: true
+        com.apple.security.network.client: true
+        com.apple.security.application-groups:
+          - $(TeamIdentifierPrefix)ca.perpetualmedia.XWidget
+        keychain-access-groups:
+          - $(AppIdentifierPrefix)ca.perpetualmedia.XWidget.shared
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: ca.perpetualmedia.XWidget
+        PRODUCT_NAME: X Widget
+        ASSETCATALOG_COMPILER_APPICON_NAME: ""
+  FeedWidget:
+    type: app-extension
+    platform: macOS
+    sources:
+      - FeedWidget
+      - Shared
+    info:
+      path: FeedWidget/Info.plist
+      properties:
+        CFBundleDisplayName: X Feed
+        AppGroupID: $(TeamIdentifierPrefix)ca.perpetualmedia.XWidget
+        KeychainGroup: $(AppIdentifierPrefix)ca.perpetualmedia.XWidget.shared
+        NSExtension:
+          NSExtensionPointIdentifier: com.apple.widgetkit-extension
+    entitlements:
+      path: FeedWidget/FeedWidget.entitlements
+      properties:
+        com.apple.security.app-sandbox: true
+        com.apple.security.network.client: true
+        com.apple.security.application-groups:
+          - $(TeamIdentifierPrefix)ca.perpetualmedia.XWidget
+        keychain-access-groups:
+          - $(AppIdentifierPrefix)ca.perpetualmedia.XWidget.shared
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: ca.perpetualmedia.XWidget.FeedWidget
+        PRODUCT_NAME: FeedWidget
+        SKIP_INSTALL: YES
