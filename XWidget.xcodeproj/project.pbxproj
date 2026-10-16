@@ -28,10 +28,12 @@
 		ABA3011816AE31B0301B3AF8 /* XAPIClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 163A7DD016A8BCFBC91B1F92 /* XAPIClient.swift */; };
 		ABF864CEAC2A1D697CF0C176 /* Models.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F31158CE460FBC0DC33DD15 /* Models.swift */; };
 		AE826FADBB64CC590DF8A5FA /* FeedWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D4DB1FE637EE2CAD6EF4F37 /* FeedWidget.swift */; };
+		C93C2A1CDE3016F18796D60B /* LaunchAtLogin.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34FA5F27DA6AA573581500BC /* LaunchAtLogin.swift */; };
 		DB01A29B7ED73CBC6D4528B4 /* XWidgetApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F53045825DE509476393F2B /* XWidgetApp.swift */; };
 		E6F830EB93A209C282C2EE15 /* XAPIClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 163A7DD016A8BCFBC91B1F92 /* XAPIClient.swift */; };
 		E7C4DE286FC5073694496EAD /* AppGroup.swift in Sources */ = {isa = PBXBuildFile; fileRef = E0B6056767404AB88F4456EE /* AppGroup.swift */; };
 		EC85753A19D9E56CC26B4D2F /* XAccountSetup.swift in Sources */ = {isa = PBXBuildFile; fileRef = F95C8ED06A66E420C84EC758 /* XAccountSetup.swift */; };
+		F67A6368E174D7293876C1B9 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 3C89A8477A34F7505DE79EC3 /* Assets.xcassets */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -64,7 +66,9 @@
 		21261C82A01E765B4944C34D /* DemoData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DemoData.swift; sourceTree = "<group>"; };
 		2AEBFDD85F368EAD901AB77C /* FeedWidget.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = FeedWidget.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		33FDD53BD8F787D37710DB2B /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
+		34FA5F27DA6AA573581500BC /* LaunchAtLogin.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LaunchAtLogin.swift; sourceTree = "<group>"; };
 		3510F19DBC5C6BAF2AF65A3D /* XWidget.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = XWidget.entitlements; sourceTree = "<group>"; };
+		3C89A8477A34F7505DE79EC3 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		3CA2125E1C6DC09ED02F65E2 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		3D4DB1FE637EE2CAD6EF4F37 /* FeedWidget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedWidget.swift; sourceTree = "<group>"; };
 		5C7ECDD9BDCEBBE7E9D8E908 /* FeedWidget.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = FeedWidget.entitlements; sourceTree = "<group>"; };
@@ -86,9 +90,11 @@
 		034C9B230881CE79AB82A373 /* XWidget */ = {
 			isa = PBXGroup;
 			children = (
+				3C89A8477A34F7505DE79EC3 /* Assets.xcassets */,
 				D17A1661BE5D016CC9EDF0E9 /* DesktopOverlay.swift */,
 				1AB06B12FB9BB168EFD7B03E /* FeedStore.swift */,
 				A2A4C245D9046C4034CFA1CC /* Info.plist */,
+				34FA5F27DA6AA573581500BC /* LaunchAtLogin.swift */,
 				33FDD53BD8F787D37710DB2B /* SettingsView.swift */,
 				F95C8ED06A66E420C84EC758 /* XAccountSetup.swift */,
 				3510F19DBC5C6BAF2AF65A3D /* XWidget.entitlements */,
@@ -167,6 +173,7 @@
 			buildConfigurationList = 750D6069A491B6D39BBA262C /* Build configuration list for PBXNativeTarget "XWidget" */;
 			buildPhases = (
 				340550138C2F6F9DD5AB8DEB /* Sources */,
+				0487F760FDB858EA70DD1A97 /* Resources */,
 				FD4EBFB279035B8EEB0EC720 /* Embed Foundation Extensions */,
 			);
 			buildRules = (
@@ -220,6 +227,17 @@
 		};
 /* End PBXProject section */
 
+/* Begin PBXResourcesBuildPhase section */
+		0487F760FDB858EA70DD1A97 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				F67A6368E174D7293876C1B9 /* Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
 /* Begin PBXSourcesBuildPhase section */
 		340550138C2F6F9DD5AB8DEB /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
@@ -232,6 +250,7 @@
 				41261AADB07ED34B05C5DD8C /* FeedRepository.swift in Sources */,
 				901954F3F5F52A5E8173C31B /* FeedStore.swift in Sources */,
 				70BFE72CD51D3A3928447B48 /* Keychain.swift in Sources */,
+				C93C2A1CDE3016F18796D60B /* LaunchAtLogin.swift in Sources */,
 				ABF864CEAC2A1D697CF0C176 /* Models.swift in Sources */,
 				205B0B52C49E73F7A95B8506 /* PostRow.swift in Sources */,
 				70E5161E1B64C21C0DCB6628 /* SettingsView.swift in Sources */,
@@ -309,7 +328,7 @@
 		5E564E318A9023B18A9DA4DB /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = "";
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = XWidget/XWidget.entitlements;
 				COMBINE_HIDPI_IMAGES = YES;
 				INFOPLIST_FILE = XWidget/Info.plist;
@@ -326,7 +345,7 @@
 		B357F13D41A98B17FB337660 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = "";
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = XWidget/XWidget.entitlements;
 				COMBINE_HIDPI_IMAGES = YES;
 				INFOPLIST_FILE = XWidget/Info.plist;
