@@ -5,8 +5,11 @@ struct XWidgetApp: App {
     @NSApplicationDelegateAdaptor(AppDelegate.self) private var appDelegate
 
     var body: some Scene {
-        MenuBarExtra("X Widget", systemImage: "text.bubble") {
+        MenuBarExtra {
             MenuContent(store: appDelegate.store, overlay: appDelegate.overlay)
+        } label: {
+            Image("MenuBarIcon")
+                .accessibilityLabel("X Widget")
         }
 
         Settings {
