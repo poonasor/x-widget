@@ -68,15 +68,45 @@ actor FeedRepository {
         }
     }
 
-    /// Engagement decayed by age (Hacker News-style), so a fresh post with traction beats an old viral one.
+    /// Highlights ranking. The rules below mirror stages of X's For You pipeline
+    /// (github.com/xai-org/x-algorithm, home-mixer/); the factors are our own, since
+    /// X's weights apply to model-predicted probabilities that the public API doesn't expose.
     /// Metrics are as of when each post was first fetched; since_id polling doesn't re-read older posts.
     static func rankedHighlights(_ posts: [Post], now: Date = .now) -> [Post] {
-        func score(_ post: Post) -> Double {
+        // AgeFilter: X drops For You candidates older than 48 hours.
+        // Fall back to the whole pool on a quiet feed so the tab isn't empty.
+        let recent = posts.filter { now.timeIntervalSince($0.createdAt) <= 48 * 3600 }
+        let pool = recent.count >= 5 ? recent : posts
+
+        // Engagement decayed by age (Hacker News-style), so a fresh post with traction beats an old viral one.
+        // Reposts and replies are discounted, like X's rescoring of in-network replies and reposts.
+        func baseScore(_ post: Post) -> Double {
             let engagement = Double(post.likeCount + 2 * post.repostCount + post.replyCount)
             let hours = max(0, now.timeIntervalSince(post.createdAt) / 3600)
-            return (engagement + 1) / pow(hours + 2, 1.5)
+            let networkFactor = post.isRepost || post.isReply ? 0.75 : 1.0
+            return networkFactor * (engagement + 1) / pow(hours + 2, 1.5)
         }
-        return posts.sorted { score($0) > score($1) }
+
+        // RetweetDeduplicationFilter: keep only the best-scoring copy of each original post,
+        // whether it arrived as the original or as someone's repost.
+        var seenOriginals = Set<String>()
+        let ranked = pool
+            .map { (post: $0, score: baseScore($0)) }
+            .sorted { $0.score > $1.score }
+            .filter { seenOriginals.insert($0.post.repostOfID ?? $0.post.id).inserted }
+
+        // Author diversity: each further post by the same author is multiplied by a decaying factor,
+        // down to a floor, so one prolific account can't fill the tab.
+        let decay = 0.6, floor = 0.2
+        var authorCounts: [String: Int] = [:]
+        return ranked
+            .map { item -> (post: Post, score: Double) in
+                let count = authorCounts[item.post.authorID, default: 0]
+                authorCounts[item.post.authorID] = count + 1
+                return (item.post, item.score * max(floor, pow(decay, Double(count))))
+            }
+            .sorted { $0.score > $1.score }
+            .map(\.post)
     }
 
     private func save(_ snapshot: FeedSnapshot) {

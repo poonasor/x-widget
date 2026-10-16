@@ -25,6 +25,12 @@ struct Post: Codable, Identifiable, Hashable, Sendable {
     let likeCount: Int
     let replyCount: Int
     let repostCount: Int
+    /// The original post's ID when this is a repost. Optional so older caches still decode.
+    var repostOfID: String? = nil
+    var replyToID: String? = nil
+
+    var isRepost: Bool { repostOfID != nil || text.hasPrefix("RT @") }
+    var isReply: Bool { replyToID != nil }
 
     var url: URL { URL(string: "https://x.com/\(authorHandle)/status/\(id)")! }
 }
