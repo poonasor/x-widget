@@ -4,9 +4,16 @@
 // Usage: swift scripts/make-icons.swift
 import AppKit
 
-let assets = URL(fileURLWithPath: CommandLine.arguments[0])
+// Resolve the repo root from this script's own location (absolute, symlinks resolved),
+// so it works no matter which directory it's run from or how the path was typed.
+let cwd = URL(fileURLWithPath: FileManager.default.currentDirectoryPath, isDirectory: true)
+let repoRoot = URL(fileURLWithPath: CommandLine.arguments[0], relativeTo: cwd)
+    .absoluteURL.standardizedFileURL.resolvingSymlinksInPath()
     .deletingLastPathComponent().deletingLastPathComponent()
-    .appending(path: "XWidget/Assets.xcassets")
+guard FileManager.default.fileExists(atPath: repoRoot.appending(path: "project.yml").path) else {
+    fatalError("Couldn't find project.yml in \(repoRoot.path). Run this script from the X Widget repo.")
+}
+let assets = repoRoot.appending(path: "XWidget/Assets.xcassets")
 
 func png(size: Int, draw: (CGContext, CGFloat) -> Void) -> Data {
     let rep = NSBitmapImageRep(bitmapDataPlanes: nil, pixelsWide: size, pixelsHigh: size, bitsPerSample: 8,
@@ -19,17 +26,18 @@ func png(size: Int, draw: (CGContext, CGFloat) -> Void) -> Data {
     return rep.representation(using: .png, properties: [:])!
 }
 
-/// Draws a heavy "X" centred on its glyph bounds (not line height), filling `fraction` of `rect`.
+func line(_ fontSize: CGFloat, color: NSColor) -> CTLine {
+    let font = NSFont.systemFont(ofSize: fontSize, weight: .black)
+    return CTLineCreateWithAttributedString(NSAttributedString(string: "X", attributes: [.font: font, .foregroundColor: color]))
+}
+
+/// Draws a heavy "X" whose glyph is exactly `fraction` of `rect`'s height, centred on its glyph bounds (not line height).
 func drawX(in rect: CGRect, fraction: CGFloat, color: NSColor, context: CGContext) {
-    var fontSize = rect.height
-    var line: CTLine
-    var bounds: CGRect
-    repeat {
-        let font = NSFont.systemFont(ofSize: fontSize, weight: .black)
-        line = CTLineCreateWithAttributedString(NSAttributedString(string: "X", attributes: [.font: font, .foregroundColor: color]))
-        bounds = CTLineGetBoundsWithOptions(line, .useGlyphPathBounds)
-        fontSize *= 0.98
-    } while bounds.height > rect.height * fraction
+    // Glyph height scales linearly with font size, so measure once at a reference size and scale.
+    let reference: CGFloat = 100
+    let referenceHeight = CTLineGetBoundsWithOptions(line(reference, color: color), .useGlyphPathBounds).height
+    let line = line(reference * rect.height * fraction / referenceHeight, color: color)
+    let bounds = CTLineGetBoundsWithOptions(line, .useGlyphPathBounds)
     context.textPosition = CGPoint(x: rect.midX - bounds.midX, y: rect.midY - bounds.midY)
     CTLineDraw(line, context)
 }
@@ -83,7 +91,7 @@ try write(try JSONSerialization.data(withJSONObject: appIconContents, options: [
 
 for scale in [1, 2] {
     let data = png(size: 18 * scale) { ctx, s in
-        drawX(in: CGRect(x: 0, y: 0, width: s, height: s), fraction: 0.78, color: .black, context: ctx)
+        drawX(in: CGRect(x: 0, y: 0, width: s, height: s), fraction: 0.73, color: .black, context: ctx)
     }
     try write(data, "MenuBarIcon.imageset/menubar\(scale == 2 ? "@2x" : "").png")
 }
