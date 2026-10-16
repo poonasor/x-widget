@@ -12,6 +12,7 @@ struct SettingsView: View {
     @AppStorage(SettingsKey.overlayEdge, store: AppGroup.defaults) private var edge = OverlayEdge.right
     @AppStorage(SettingsKey.overlayWidth, store: AppGroup.defaults) private var width = 380.0
     @AppStorage(SettingsKey.overlayStyle, store: AppGroup.defaults) private var style = OverlayStyle.glass
+    @AppStorage(SettingsKey.showMedia, store: AppGroup.defaults) private var showMedia = true
 
     private enum SettingsTab: Hashable { case general, account }
     // New users land on X Account so setup is the first thing they see.
@@ -54,6 +55,7 @@ struct SettingsView: View {
                 Picker("Style", selection: $style) {
                     ForEach(OverlayStyle.allCases) { Text($0.title).tag($0) }
                 }
+                Toggle("Show images", isOn: $showMedia)
                 Slider(value: $width, in: 300...560, step: 10) { Text("Width") }
             }
         }

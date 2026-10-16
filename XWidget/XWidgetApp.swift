@@ -28,6 +28,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             SettingsKey.overlayWidth: 380.0,
             SettingsKey.overlayStyle: OverlayStyle.glass.rawValue,
             SettingsKey.overlayFeed: FeedKind.following.rawValue,
+            SettingsKey.showMedia: true,
         ])
         store.start()
         overlay.applySettings()

@@ -33,7 +33,8 @@ struct XAPIClient: Sendable {
         var query = [
             URLQueryItem(name: "max_results", value: String(maxResults)),
             URLQueryItem(name: "exclude", value: "replies"),
-            URLQueryItem(name: "expansions", value: "author_id"),
+            URLQueryItem(name: "expansions", value: "author_id,attachments.media_keys"),
+            URLQueryItem(name: "media.fields", value: "type,url,preview_image_url,width,height,alt_text"),
             URLQueryItem(name: "tweet.fields", value: "created_at,public_metrics,author_id,note_tweet,referenced_tweets"),
             URLQueryItem(name: "user.fields", value: "name,username,profile_image_url"),
         ]
@@ -84,17 +85,39 @@ private struct TimelinePage: Decodable {
         let public_metrics: Metrics?
         let note_tweet: NoteTweet?
         let referenced_tweets: [Reference]?
+        struct Attachments: Decodable { let media_keys: [String]? }
+        let attachments: Attachments?
 
         func reference(_ type: String) -> String? { referenced_tweets?.first { $0.type == type }?.id }
     }
     struct User: Decodable { let id: String; let name: String; let username: String; let profile_image_url: URL? }
-    struct Includes: Decodable { let users: [User]? }
+    struct Media: Decodable {
+        let media_key: String
+        let type: String
+        let url: URL?
+        let preview_image_url: URL?
+        let width: Int?
+        let height: Int?
+        let alt_text: String?
+
+        var postMedia: PostMedia? {
+            let kind: PostMedia.Kind = switch type {
+            case "video": .video
+            case "animated_gif": .gif
+            default: .photo
+            }
+            guard let image = url ?? preview_image_url else { return nil }
+            return PostMedia(kind: kind, imageURL: image, width: width, height: height, altText: alt_text)
+        }
+    }
+    struct Includes: Decodable { let users: [User]?; let media: [Media]? }
 
     let data: [Tweet]?
     let includes: Includes?
 
     var posts: [Post] {
         let users = Dictionary((includes?.users ?? []).map { ($0.id, $0) }, uniquingKeysWith: { a, _ in a })
+        let media = Dictionary((includes?.media ?? []).map { ($0.media_key, $0) }, uniquingKeysWith: { a, _ in a })
         return (data ?? []).map { tweet in
             let user = users[tweet.author_id]
             return Post(
@@ -109,7 +132,8 @@ private struct TimelinePage: Decodable {
                 replyCount: tweet.public_metrics?.reply_count ?? 0,
                 repostCount: tweet.public_metrics?.retweet_count ?? 0,
                 repostOfID: tweet.reference("retweeted"),
-                replyToID: tweet.reference("replied_to")
+                replyToID: tweet.reference("replied_to"),
+                media: tweet.attachments?.media_keys?.compactMap { media[$0]?.postMedia }
             )
         }
     }

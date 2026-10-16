@@ -113,6 +113,7 @@ struct DesktopFeedView: View {
     let store: FeedStore
     @AppStorage(SettingsKey.overlayFeed, store: AppGroup.defaults) private var feed = FeedKind.following
     @AppStorage(SettingsKey.overlayStyle, store: AppGroup.defaults) private var style = OverlayStyle.glass
+    @AppStorage(SettingsKey.showMedia, store: AppGroup.defaults) private var showMedia = true
     @Environment(\.openURL) private var openURL
 
     private static let shadowRoom: CGFloat = 8
@@ -134,7 +135,7 @@ struct DesktopFeedView: View {
                 LazyVStack(spacing: 8) {
                     ForEach(snapshot.posts) { post in
                         Button { openURL(post.url) } label: {
-                            PostRow(post: post, lineLimit: 5, avatarSize: 32)
+                            PostRow(post: post, lineLimit: 5, avatarSize: 32, showMedia: showMedia)
                                 .padding(10)
                                 .frame(maxWidth: .infinity, alignment: .leading)
                                 .contentShape(.rect)
