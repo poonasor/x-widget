@@ -24,7 +24,7 @@ struct FeedWidget: Widget {
 extension FeedKind: AppEnum {
     static var typeDisplayRepresentation: TypeDisplayRepresentation { "Feed" }
     static var caseDisplayRepresentations: [FeedKind: DisplayRepresentation] {
-        [.forYou: "For You", .following: "Following"]
+        [.highlights: "Highlights", .following: "Following"]
     }
 }
 
@@ -74,7 +74,7 @@ struct FeedProvider: AppIntentTimelineProvider {
         // If the app polled recently, reuse its cache instead of spending another API read.
         let cached = await FeedRepository.shared.cached(configuration.feed)
         let snapshot: FeedSnapshot
-        if let cached, cached.updatedAt.timeIntervalSinceNow > -60 {
+        if let cached, cached.updatedAt.timeIntervalSinceNow > -FeedRepository.freshness {
             snapshot = cached
         } else {
             snapshot = await FeedRepository.shared.refresh(configuration.feed)

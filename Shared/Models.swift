@@ -1,14 +1,14 @@
 import Foundation
 
 enum FeedKind: String, Codable, CaseIterable, Identifiable, Sendable {
-    case forYou
+    case highlights
     case following
 
     var id: String { rawValue }
 
     var title: String {
         switch self {
-        case .forYou: "For You"
+        case .highlights: "Highlights"
         case .following: "Following"
         }
     }

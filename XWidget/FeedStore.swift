@@ -38,7 +38,8 @@ final class FeedStore {
         defer { isRefreshing = false }
 
         var changed = false
-        for kind in FeedKind.allCases {
+        // Following first: Highlights are ranked from its freshly cached posts.
+        for kind in [FeedKind.following, .highlights] {
             let fresh = await FeedRepository.shared.refresh(kind)
             if fresh.posts != snapshots[kind]?.posts || fresh.status != snapshots[kind]?.status { changed = true }
             withAnimation(.snappy) { snapshots[kind] = fresh }
