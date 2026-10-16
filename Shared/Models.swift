@@ -1,14 +1,14 @@
 import Foundation
 
 enum FeedKind: String, Codable, CaseIterable, Identifiable, Sendable {
-    case forYou
+    case highlights
     case following
 
     var id: String { rawValue }
 
     var title: String {
         switch self {
-        case .forYou: "For You"
+        case .highlights: "Highlights"
         case .following: "Following"
         }
     }
@@ -25,6 +25,12 @@ struct Post: Codable, Identifiable, Hashable, Sendable {
     let likeCount: Int
     let replyCount: Int
     let repostCount: Int
+    /// The original post's ID when this is a repost. Optional so older caches still decode.
+    var repostOfID: String? = nil
+    var replyToID: String? = nil
+
+    var isRepost: Bool { repostOfID != nil || text.hasPrefix("RT @") }
+    var isReply: Bool { replyToID != nil }
 
     var url: URL { URL(string: "https://x.com/\(authorHandle)/status/\(id)")! }
 }

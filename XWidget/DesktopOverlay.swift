@@ -151,9 +151,14 @@ struct DesktopFeedView: View {
             }
             .padding(.horizontal, -Self.shadowRoom)
             .scrollIndicators(.never)
+            // Lets the last post scroll clear of the bottom fade.
+            .contentMargins(.bottom, 60, for: .scrollContent)
             .mask(LinearGradient(stops: [.init(color: .black, location: 0.9), .init(color: .clear, location: 1)], startPoint: .top, endPoint: .bottom))
         }
         .padding(Self.shadowRoom)
+        // macOS passes mouse and scroll events through fully transparent pixels to the desktop,
+        // so give the whole panel an invisible (but non-zero alpha) backing to keep scrolling anywhere in it.
+        .background(Color.black.opacity(0.01))
         .foregroundStyle(.white)
         .environment(\.colorScheme, .dark)
     }

@@ -34,7 +34,7 @@ struct XAPIClient: Sendable {
             URLQueryItem(name: "max_results", value: String(maxResults)),
             URLQueryItem(name: "exclude", value: "replies"),
             URLQueryItem(name: "expansions", value: "author_id"),
-            URLQueryItem(name: "tweet.fields", value: "created_at,public_metrics,author_id,note_tweet"),
+            URLQueryItem(name: "tweet.fields", value: "created_at,public_metrics,author_id,note_tweet,referenced_tweets"),
             URLQueryItem(name: "user.fields", value: "name,username,profile_image_url"),
         ]
         if let sinceID { query.append(URLQueryItem(name: "since_id", value: sinceID)) }
@@ -76,12 +76,16 @@ private struct TimelinePage: Decodable {
     struct Tweet: Decodable {
         struct Metrics: Decodable { let like_count: Int; let reply_count: Int; let retweet_count: Int }
         struct NoteTweet: Decodable { let text: String }
+        struct Reference: Decodable { let type: String; let id: String }
         let id: String
         let text: String
         let author_id: String
         let created_at: Date
         let public_metrics: Metrics?
         let note_tweet: NoteTweet?
+        let referenced_tweets: [Reference]?
+
+        func reference(_ type: String) -> String? { referenced_tweets?.first { $0.type == type }?.id }
     }
     struct User: Decodable { let id: String; let name: String; let username: String; let profile_image_url: URL? }
     struct Includes: Decodable { let users: [User]? }
@@ -103,7 +107,9 @@ private struct TimelinePage: Decodable {
                 avatarURL: user?.profile_image_url,
                 likeCount: tweet.public_metrics?.like_count ?? 0,
                 replyCount: tweet.public_metrics?.reply_count ?? 0,
-                repostCount: tweet.public_metrics?.retweet_count ?? 0
+                repostCount: tweet.public_metrics?.retweet_count ?? 0,
+                repostOfID: tweet.reference("retweeted"),
+                replyToID: tweet.reference("replied_to")
             )
         }
     }

@@ -31,6 +31,7 @@
 		DB01A29B7ED73CBC6D4528B4 /* XWidgetApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F53045825DE509476393F2B /* XWidgetApp.swift */; };
 		E6F830EB93A209C282C2EE15 /* XAPIClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 163A7DD016A8BCFBC91B1F92 /* XAPIClient.swift */; };
 		E7C4DE286FC5073694496EAD /* AppGroup.swift in Sources */ = {isa = PBXBuildFile; fileRef = E0B6056767404AB88F4456EE /* AppGroup.swift */; };
+		EC85753A19D9E56CC26B4D2F /* XAccountSetup.swift in Sources */ = {isa = PBXBuildFile; fileRef = F95C8ED06A66E420C84EC758 /* XAccountSetup.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -77,6 +78,7 @@
 		CAFF2B7E8CA66CDAFB36D099 /* FeedRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedRepository.swift; sourceTree = "<group>"; };
 		D17A1661BE5D016CC9EDF0E9 /* DesktopOverlay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DesktopOverlay.swift; sourceTree = "<group>"; };
 		E0B6056767404AB88F4456EE /* AppGroup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppGroup.swift; sourceTree = "<group>"; };
+		F95C8ED06A66E420C84EC758 /* XAccountSetup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = XAccountSetup.swift; sourceTree = "<group>"; };
 		FAE0C13906EA26BACF9ED4A0 /* PostRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PostRow.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -88,6 +90,7 @@
 				1AB06B12FB9BB168EFD7B03E /* FeedStore.swift */,
 				A2A4C245D9046C4034CFA1CC /* Info.plist */,
 				33FDD53BD8F787D37710DB2B /* SettingsView.swift */,
+				F95C8ED06A66E420C84EC758 /* XAccountSetup.swift */,
 				3510F19DBC5C6BAF2AF65A3D /* XWidget.entitlements */,
 				9F53045825DE509476393F2B /* XWidgetApp.swift */,
 			);
@@ -233,6 +236,7 @@
 				205B0B52C49E73F7A95B8506 /* PostRow.swift in Sources */,
 				70E5161E1B64C21C0DCB6628 /* SettingsView.swift in Sources */,
 				E6F830EB93A209C282C2EE15 /* XAPIClient.swift in Sources */,
+				EC85753A19D9E56CC26B4D2F /* XAccountSetup.swift in Sources */,
 				256658A7EF03B10AB0EBB0F1 /* XAuth.swift in Sources */,
 				DB01A29B7ED73CBC6D4528B4 /* XWidgetApp.swift in Sources */,
 			);

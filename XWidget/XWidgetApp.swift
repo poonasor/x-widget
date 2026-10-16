@@ -48,6 +48,10 @@ private struct MenuContent: View {
     let overlay: DesktopOverlayController
 
     var body: some View {
+        if TokenStore.load() == nil {
+            SettingsLink { Text("Set Up X Account…") }
+            Divider()
+        }
         Button(overlay.isVisible ? "Hide Desktop Feed" : "Show Desktop Feed") { overlay.toggle() }
         DisplayPicker(overlay: overlay)
         Button("Refresh Now") { Task { await store.refreshAll() } }
