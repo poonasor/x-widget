@@ -13,29 +13,9 @@ struct SettingsView: View {
     @AppStorage(SettingsKey.overlayWidth, store: AppGroup.defaults) private var width = 380.0
     @AppStorage(SettingsKey.overlayStyle, store: AppGroup.defaults) private var style = OverlayStyle.glass
 
-    @State private var signedIn = TokenStore.load() != nil
-    @State private var authError: String?
-    @State private var signIn = SignInController()
-
     var body: some View {
         Form {
-            Section("X Account") {
-                TextField("OAuth 2.0 Client ID", text: $clientID)
-                    .textFieldStyle(.roundedBorder)
-                Text("Create a Native App in the X Developer Portal with callback **\(XAuth.redirectURI)** and paste its Client ID.")
-                    .font(.caption).foregroundStyle(.secondary)
-                HStack {
-                    if signedIn {
-                        Label("Signed in", systemImage: "checkmark.circle.fill").foregroundStyle(.green)
-                        Spacer()
-                        Button("Sign Out") { TokenStore.clear(); signedIn = false; refresh() }
-                    } else {
-                        Button("Sign in with X") { Task { await startSignIn() } }
-                            .disabled(clientID.isEmpty)
-                    }
-                }
-                if let authError { Text(authError).font(.caption).foregroundStyle(.red) }
-            }
+            XAccountSection(store: store)
 
             Section("Live Updates") {
                 Picker("Poll every", selection: $pollInterval) {
@@ -62,7 +42,8 @@ struct SettingsView: View {
             }
         }
         .formStyle(.grouped)
-        .frame(width: 460)
+        .frame(width: 500)
+        .frame(minHeight: 560, idealHeight: 760)
         .onAppear { NSApp.activate() }
         .onChange(of: overlayEnabled) { overlay.applySettings() }
         .onChange(of: edge) { overlay.applySettings() }
@@ -72,19 +53,6 @@ struct SettingsView: View {
     }
 
     private func refresh() { Task { await store.refreshAll() } }
-
-    private func startSignIn() async {
-        authError = nil
-        do {
-            try await signIn.signIn(clientID: clientID)
-            signedIn = true
-            refresh()
-        } catch let error as ASWebAuthenticationSessionError where error.code == .canceledLogin {
-            // User closed the sheet.
-        } catch {
-            authError = error.localizedDescription
-        }
-    }
 }
 
 /// Interactive OAuth 2.0 PKCE sign-in via ASWebAuthenticationSession.
@@ -109,7 +77,8 @@ final class SignInController: NSObject, ASWebAuthenticationPresentationContextPr
         ]
 
         let callback: URL = try await withCheckedThrowingContinuation { continuation in
-            let session = ASWebAuthenticationSession(url: components.url!, callback: .customScheme("xwidget")) { url, error in
+            let session = ASWebAuthenticationSession(url: components.url!, callback: .customScheme("xwidget")) { @Sendable url, error in
+                // Called on a background XPC queue; @Sendable stops it inheriting MainActor isolation (which traps).
                 if let url { continuation.resume(returning: url) } else { continuation.resume(throwing: error ?? URLError(.unknown)) }
             }
             session.presentationContextProvider = self
@@ -134,7 +103,8 @@ final class SignInController: NSObject, ASWebAuthenticationPresentationContextPr
     }
 
     nonisolated func presentationAnchor(for session: ASWebAuthenticationSession) -> ASPresentationAnchor {
-        MainActor.assumeIsolated { NSApp.keyWindow ?? NSApp.windows.first { $0.isVisible } ?? ASPresentationAnchor() }
+        let anchor = { @MainActor in NSApp.keyWindow ?? NSApp.windows.first { $0.isVisible } ?? ASPresentationAnchor() }
+        return Thread.isMainThread ? MainActor.assumeIsolated(anchor) : DispatchQueue.main.sync(execute: anchor)
     }
 
     private static func randomURLSafe(_ count: Int) -> String {
